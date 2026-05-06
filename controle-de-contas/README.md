@@ -1,16 +1,17 @@
-# React + Vite
+# 💰 Controle de Contas - Fluxo de Caixa Mensal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação Full-Stack para gestão inteligente de finanças pessoais, projetada com foco em usabilidade e performance.
 
-Currently, two official plugins are available:
+## 🚀 Status do Projeto: Fase 5 Concluída (Gestão de Tempo e UI Responsiva)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+O sistema agora suporta navegação por meses (Competência Mensal) e possui um design híbrido (Mobile-First), comportando-se como um Web App nativo em celulares e como uma Dashboard gerencial no PC.
 
-## React Compiler
+### 🛠️ Como rodar localmente
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Clone o repositório.
+2. Instale as dependências: `npm install`
+3. Crie um arquivo `.env.local` na raiz e adicione as chaves:
+   ```env
+   VITE_SUPABASE_URL=seu_url_do_supabase
+   VITE_SUPABASE_ANON_KEY=sua_key_anonima_do_supabase
+   ```
