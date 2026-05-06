@@ -1,99 +1,70 @@
 export function TransactionList({ contas, onDelete, onToggleStatus }) {
+  
+  // Tratamento de string para evitar erros de fuso horário do objeto Date
+  const formatDate = (isoDate) => {
+    const [y, m, d] = isoDate.split('-')
+    return `${d}/${m}/${y}`
+  }
+
+  const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val)
+
   return (
-    <div className="bg-white p-4 md:p-6 rounded-lg shadow-sm">
-      <h2 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Minhas Contas</h2>
+    <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-slate-100">
+      <h2 className="text-lg font-bold text-slate-800 mb-6">Detalhamento</h2>
 
-      {/* VERSÃO MOBILE: Cards que aparecem apenas em telas pequenas */}
-      <div className="flex flex-col gap-3 md:hidden">
-        {contas.length === 0 && (
-          <p className="text-center py-4 text-slate-400">Nenhuma conta cadastrada.</p>
-        )}
-        
-        {contas.map((conta) => (
-          <div key={conta.id} className="p-4 rounded-xl border border-slate-100 bg-slate-50 shadow-sm">
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <h3 className="font-bold text-slate-900 leading-none">{conta.nome}</h3>
-                <span className="text-[10px] text-slate-400 uppercase tracking-tighter">{conta.tipo}</span>
-              </div>
-              <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase
-                ${conta.status === 'paga' ? 'bg-green-500 text-white' : 'bg-amber-400 text-white'}
-              `}>
-                {conta.status}
-              </span>
+      {/* Mobile View */}
+      <div className="md:hidden flex flex-col gap-3">
+        {contas.map(c => (
+          <div key={c.id} className="p-4 rounded-xl border border-slate-100 bg-slate-50 relative">
+            <div className="flex justify-between items-center mb-2">
+              <span className="font-bold text-slate-900">{c.nome}</span>
+              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase text-white shadow-sm ${c.status === 'paga' ? 'bg-green-500' : 'bg-amber-400'}`}>{c.status}</span>
             </div>
-
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-end">
               <div>
-                <p className="text-lg font-bold text-blue-700">
-                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(conta.valor)}
-                </p>
-                <p className="text-[10px] text-slate-400">
-                  Vencimento: {new Date(conta.created_at).toLocaleDateString('pt-BR')}
-                </p>
+                <p className="text-lg font-black text-blue-700">{formatBRL(c.valor)}</p>
+                <p className="text-[10px] text-slate-400">Vencimento: {formatDate(c.data_vencimento)}</p>
               </div>
-
               <div className="flex gap-2">
-                <button 
-                  onClick={() => onToggleStatus(conta.id, conta.status)}
-                  className="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-lg shadow-sm active:bg-green-50 text-xl"
-                >
-                  {conta.status === 'pendente' ? '✅' : '⏳'}
-                </button>
-                <button 
-                  onClick={() => onDelete(conta.id)}
-                  className="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-lg shadow-sm text-red-500 active:bg-red-50"
-                >
-                  🗑️
-                </button>
+                <button onClick={() => onToggleStatus(c.id, c.status)} className="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-full shadow-sm">{c.status === 'pendente' ? '✅' : '⏳'}</button>
+                <button onClick={() => onDelete(c.id)} className="w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-full shadow-sm text-red-500">🗑️</button>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* VERSÃO DESKTOP: Tabela clássica que aparece apenas em telas médias/grandes */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+      {/* Desktop View */}
+      <div className="hidden md:block">
+        <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-slate-200 text-slate-400 text-xs uppercase tracking-widest">
-              <th className="pb-3 font-semibold">Nome</th>
-              <th className="pb-3 font-semibold">Valor</th>
-              <th className="pb-3 font-semibold">Tipo</th>
-              <th className="pb-3 font-semibold text-center">Status</th>
-              <th className="pb-3 font-semibold text-right">Ações</th>
+            <tr className="text-slate-400 text-[11px] uppercase tracking-widest border-b border-slate-100">
+              <th className="pb-4">Descrição</th>
+              <th className="pb-4">Valor</th>
+              <th className="pb-4">Data</th>
+              <th className="pb-4 text-center">Status</th>
+              <th className="pb-4 text-right">Ações</th>
             </tr>
           </thead>
-          <tbody>
-            {contas.map((conta) => (
-              <tr key={conta.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                <td className="py-4 text-slate-800 font-medium">{conta.nome}</td>
-                <td className="py-4 text-blue-700 font-bold">
-                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(conta.valor)}
-                </td>
-                <td className="py-4 text-slate-500 text-sm">{conta.tipo}</td>
+          <tbody className="divide-y divide-slate-50">
+            {contas.map(c => (
+              <tr key={c.id} className="group hover:bg-slate-50/50 transition-colors">
+                <td className="py-4 font-semibold text-slate-700">{c.nome}</td>
+                <td className="py-4 text-blue-700 font-black">{formatBRL(c.valor)}</td>
+                <td className="py-4 text-slate-500 text-sm">{formatDate(c.data_vencimento)}</td>
                 <td className="py-4 text-center">
-                  <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase
-                    ${conta.status === 'paga' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}
-                  `}>
-                    {conta.status}
-                  </span>
+                  <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${c.status === 'paga' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>{c.status}</span>
                 </td>
-                <td className="py-4">
-                  <div className="flex gap-2 justify-end">
-                    <button onClick={() => onToggleStatus(conta.id, conta.status)} className="p-2 hover:bg-slate-200 rounded-md transition-colors grayscale hover:grayscale-0">
-                      {conta.status === 'pendente' ? '✅' : '⏳'}
-                    </button>
-                    <button onClick={() => onDelete(conta.id)} className="p-2 hover:bg-red-50 text-red-400 hover:text-red-600 rounded-md transition-colors">
-                      🗑️
-                    </button>
-                  </div>
+                <td className="py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => onToggleStatus(c.id, c.status)} className="p-2 hover:bg-slate-200 rounded-lg">{c.status === 'pendente' ? '✅' : '⏳'}</button>
+                  <button onClick={() => onDelete(c.id)} className="p-2 hover:bg-red-50 text-red-400 rounded-lg ml-1">🗑️</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      {contas.length === 0 && <p className="text-center py-10 text-slate-300 font-medium italic">Nenhum registro encontrado para este período.</p>}
     </div>
   )
 }
